@@ -5,25 +5,26 @@ const port = process.env.DEV_PORT || 3022;
 app.use(express.json());
 var dbIndex = require('./db/index.js')
 
-app.get('/qa/questions', function (req, res) {
-  console.log('here is query111', req.query.product_id)
+app.get('/qa/questions',  function (req, res) {
 
-  dbIndex.getQuestions(req.query.product_id)
-    // .then((data) => { console.log(data, "datttttt"), res.send(data) })
-    // .catch(function (error) {
-    //   res.send(error);
-    //   console.error(error);
-    // })
+ dbIndex.getQuestions(req.query.product_id).then((data) => { console.log(data, "datttttt"), res.send(data) })
+    .catch(function (error) {
+      res.send(error);
+      console.error(error);
+    })
 })
 
 app.post('/qa/questions', function (req, res) {
-  console.log('here is query2222', req.body)
-  // QuestionPost(req.body.formInfo, TOKEN)
-  //   .then((data) => { res.send(data) })
-  //   .catch(function (error) {
-  //     res.send(error);
-  //     console.error(error);
-  //   })
+  console.log('post questtttt', req.body)
+  dbIndex.postQuestions(req.body)
+    .then((data) => {
+      console.log('in server posttttt', res.res);
+      res.send('Created')
+    })
+    .catch(function (error) {
+      res.send(error);
+      console.error(error);
+    })
 });
 
 app.put('/questions/helpful', function (req, res) {
