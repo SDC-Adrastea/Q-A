@@ -7,7 +7,7 @@ var dbIndex = require('./db/index.js')
 
 app.get('/qa/questions',  function (req, res) {
 
- dbIndex.getQuestions(req.query.product_id).then((data) => { console.log(data, "datttttt"), res.send(data) })
+ dbIndex.getQuestions(req.query.product_id).then((data) => { res.send(data) })
     .catch(function (error) {
       res.send(error);
       console.error(error);
@@ -15,10 +15,8 @@ app.get('/qa/questions',  function (req, res) {
 })
 
 app.post('/qa/questions', function (req, res) {
-  console.log('post questtttt', req.body)
   dbIndex.postQuestions(req.body)
     .then((data) => {
-      console.log('in server posttttt', res.res);
       res.send('Created')
     })
     .catch(function (error) {
@@ -27,58 +25,62 @@ app.post('/qa/questions', function (req, res) {
     })
 });
 
-app.put('/questions/helpful', function (req, res) {
-  console.log('here is query333', req.body)
-  // helpfulQuestion(req.body.question_id, TOKEN)
-  //   .then((data) => { res.send(data) })
-  //   .catch(function (error) {
-  //     res.send(error);
-  //     console.error(error);
-  //   })
+app.put(`/qa/questions/:question_id/helpful`, function (req, res) {
+  dbIndex.helpfulQuestion(req.params.question_id)
+    .then((data) => {res.end() })
+    .catch(function (error) {
+      res.send(error);
+      console.error(error);
+    })
 });
 
-app.put('/answers/helpful', function (req, res) {
-  console.log('here is query444', req.body)
-  // console.log('here is query', req.body.answer_id)
-  // helpfulAnswer(req.body.answer_id, TOKEN)
-  //   .then((data) => { res.send(data) })
-  //   .catch(function (error) {
-  //     res.send(error);
-  //     console.error(error);
-  //   })
+app.put('/qa/answers/:answerId/helpful', function (req, res) {
+  dbIndex.helpfulAnswer(req.params.answerId)
+    .then((data) => { res.end() })
+    .catch(function (error) {
+      res.send(error);
+      console.error(error);
+    })
 });
 
 
 
-app.get('/answers', function (req, res) {
-  console.log('here is query555', req.body)
-  // AnswersGet(req.query.questionId, TOKEN)
-  //   .then((data) => { res.send(data) })
-  //   .catch(function (error) {
-  //     res.send(error);
-  //     console.error(error);
-  //   })
+app.get('/qa/questions/:question_id/answers', function (req, res) {
+  dbIndex.AnswersGet(req.params.question_id)
+    .then((data) => {res.send(data) })
+    .catch(function (error) {
+      res.send(error);
+      console.error(error);
+    })
 })
 
-app.post('/answers', function (req, res) {
-  console.log('here is query6666', req.body)
-  // AnswerPost(req.body.formInfo, TOKEN)
-  //   .then((data) => { res.send(data) })
-  //   .catch(function (error) {
-  //     res.send(error);
-  //     console.error('here is answer post', error);
-  //   })
+app.post('/qa/questions/:questionId/answers', function (req, res) {
+  dbIndex.postAnswer(req.params.questionId, req.body)
+  .then((data) => {
+    res.send('Created')
+  })
+  .catch(function (error) {
+    res.send(error);
+    console.error(error);
+  })
 });
 
-app.put('/answers/report', function (req, res) {
-  console.log('here is query7777', req.body)
-  // console.log('here is query', req.body.answer_id, TOKEN)
-  // reportAnswer(req.body.answer_id, TOKEN)
-  //   .then((data) => { res.send(data) })
-  //   .catch(function (error) {
-  //     res.send(error);
-  //     console.error(error);
-  //   })
+app.put('/qa/answers/:answerId/report', function (req, res) {
+  dbIndex.reportAnswer(req.params.answerId)
+  .then((data) => {res.send(data) })
+  .catch(function (error) {
+    res.send(error);
+    console.error(error);
+  })
+});
+
+app.put('/qa/questions/:questionId/report', function (req, res) {
+  dbIndex.reportQuestion(req.params.questionId)
+  .then((data) => {res.send(data) })
+  .catch(function (error) {
+    res.send(error);
+    console.error(error);
+  })
 });
 
 

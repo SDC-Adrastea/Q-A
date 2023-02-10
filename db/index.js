@@ -93,43 +93,109 @@ let getQuestions = async (prod_id) => {
     }
     clientObj.results.push(curQuestion)
   }
-  console.log(clientObj, "client obj")
   return clientObj;
 }
 
 let postQuestions  = async (data) => {
-  console.log(data, "qqqqqqpot")
-  var counter;
   let counting = await Questions.countDocuments({}, function( err, count){
-    counter = count
-    return
+    return count
   })
-  console.log(counter+1, "ddss")
   var obj = {
-    id: counter +1,
+    id: counting +1,
     product_id: data.product_id,
     body: data.body,
     date_written: Math.floor(new Date().getTime() / 1000),
     asker_name: data.name,
     asker_email: data.email,
-    reported: false,
+    reported: 0,
     helpful: 0,
   }
   let created = await Questions.create(obj)
-  .then((data) =>{
-    console.log(data, "in server after creating documentttt")
-
-    return data
-  })
-  .catch(function (error) {
-    console.error(error);
-  })
   return created
+}
 
+let helpfulQuestion  = async (questionId) => {
+  let updated = await Questions.findOneAndUpdate({id: questionId}, {  $inc: { helpful: 1 } })
+  return updated
+}
+let AnswersGet = async (questionId) => {
+  var clientObj = { question: questionId,
+                    page: 1,
+                    count: 100,
+                    results: [] }
 
+  var answers = await Answers.aggregate(
+    [{ $match: { question_id: Number(questionId) } }
+    ])
+
+  for (const answer of answers) {
+
+    var curAnswer = {
+      answer_id: answer.id,
+      body: answer.body,
+      date: new Date(answer.date_written).toISOString(),
+      answerer_name: answer.answerer_name,
+      helpfulness: answer.helpful,
+      photos: []
+    }
+    var photos = await Photos.aggregate(
+      [{ $match: { answer_id: answer.id } }
+      ])
+    //for each photo get url
+    if (photos !== []) {
+      for (const photoObj of photos) {
+        curAnswer.photos.push({id: photoObj.id, url: photoObj.url})
+      }
+    }
+
+    clientObj.results.push(curAnswer)
+  }
+
+return clientObj;
+
+}
+let postAnswer = async (questionId, data) => {
+  let counting = await Answers.countDocuments({}, function( err, count){
+    return count
+  })
+  var obj = {
+    id: counting +1,
+    question_id: Number(questionId),
+    body: data.body,
+    date_written: Math.floor(new Date().getTime() / 1000),
+    answerer_name: data.name,
+    answerer_email: data.email,
+    reported: 0,
+    helpful: 0,
+  }
+  let created = await Answers.create(obj)
+  return created
+}
+
+let helpfulAnswer = async (answerId) => {
+  let updated = await Answers.findOneAndUpdate({id: Number(answerId)}, {  $inc: { helpful: 1 } })
+  return updated
+}
+
+let reportAnswer = async (answerId) => {
+  console.log(answerId, "hh")
+  let updated = await Answers.findOneAndUpdate({id: Number(answerId)}, { reported: true })
+  return updated
+}
+
+let reportQuestion = async (questionId) => {
+  console.log(questionId, "hh")
+  let updated = await Questions.findOneAndUpdate({id: Number(questionId)}, { reported: true })
+  return updated
 }
 
 module.exports = {
   getQuestions: getQuestions,
   postQuestions: postQuestions,
+  helpfulQuestion: helpfulQuestion,
+  AnswersGet: AnswersGet,
+  postAnswer: postAnswer,
+  helpfulAnswer: helpfulAnswer,
+  reportAnswer: reportAnswer,
+  reportQuestion: reportQuestion,
 }
