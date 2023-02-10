@@ -88,3 +88,5 @@ app.put('/qa/questions/:questionId/report', function (req, res) {
 app.listen(port, () => {
   console.log(`listening on port ${port}`)
 })
+
+module.exports = { app }

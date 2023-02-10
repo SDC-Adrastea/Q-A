@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-//const nanoid = require('nanoid');
-//import { nanoid } from 'nanoid';
+
 mongoose.connect('mongodb://localhost/QandA', { useNewUrlParser: true, useCreateIndex: true });
 
 let questionSchema = new mongoose.Schema({

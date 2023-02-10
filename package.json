@@ -30,6 +30,7 @@
     "mongodb": "^5.0.0",
     "mongoose": "^5.10.15",
     "nanoid": "^4.0.1",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.3"
   }
 }
