@@ -43,7 +43,21 @@ app.put('/qa/answers/:answerId/helpful', function (req, res) {
     })
 });
 
+app.get('/setAnswers', function (req, res) {
+  dbIndex.setAnswers()
+    .then(() => {console.log('finished setting answers') })
+    .catch(function (error) {
+      console.error(error);
+    })
+})
 
+app.get('/setQuestions', function (req, res) {
+  dbIndex.setQuestions()
+    .then(() => {console.log('finished setting setQuestions') })
+    .catch(function (error) {
+      console.error(error);
+    })
+})
 
 app.get('/qa/questions/:question_id/answers', function (req, res) {
   dbIndex.AnswersGet(req.params.question_id)
