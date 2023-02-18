@@ -265,7 +265,8 @@ let setQuestions = async () => {
   }
   return
 }
-
+setAnswers()
+setQuestions()
 module.exports = {
   getQuestions: getQuestions,
   postQuestions: postQuestions,
